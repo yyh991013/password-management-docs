@@ -13,23 +13,23 @@
 
 #### 用户表UserInfo
 
-| 字段名称       | 字段类型      | 字段约束              | 注释            |
-| :------------- | ------------- | --------------------- | --------------- |
-| UserName       | VARCHAR(20)   | PRIMARY KEY, NOT NULL | 用户名          |
-| UserID         | VARCHAR(32)   | NOT NULL, UNIQUE      | 用户ID(UID)密文 |
-| UserPublicKey  | VARCHAR(2048) | NOT NULL, UNIQUE      | 用户RSA公钥     |
-| UserPrivateKey | VARCHAR(4096) | NOT NULL, UNIQUE      | 用户RSA私钥密文 |
+| 字段名称       | 字段类型    | 字段约束              | 注释            |
+| :------------- | ----------- | --------------------- | --------------- |
+| UserName       | VARCHAR(20) | PRIMARY KEY, NOT NULL | 用户名          |
+| UserID         | CHAR(32)    | NOT NULL, UNIQUE      | 用户ID(UID)密文 |
+| UserPublicKey  | TEXT        | NOT NULL, UNIQUE      | 用户RSA公钥     |
+| UserPrivateKey | TEXT        | NOT NULL, UNIQUE      | 用户RSA私钥密文 |
 
 #### 数据记录表DataRecord
 
-| 字段名称       | 字段类型    | 字段约束                                   | 注释                  |
-| -------------- | ----------- | ------------------------------------------ | --------------------- |
-| UserName       | VARCHAR(20) | PRIMARY KEY, REFERENCES UserInfo(UserName) | 外键，用户名          |
-| RecordID       | VARCHAR(32) | NOT NULL, REFERENCES DataRecord            | 数据ID                |
-| RecordTitle    | VARCHAR(48) | NOT NULL                                   | 数据记录标题          |
-| RecordSort     | VARCHAR(32) | NOT NULL                                   | 数据记录分类          |
-| RecordKey      | VARCHAR(48) | NOT NULL, UNIQUE                           | 加密数据的AES密钥密文 |
-| RecordFileName | VARCHAR(32) | NOT NULL, UNIQUE                           | 数据文件的文件名      |
+| 字段名称       | 字段类型    | 字段约束                                | 注释                  |
+| -------------- | ----------- | --------------------------------------- | --------------------- |
+| RecordID       | VARCHAR(32) | NOT NULL, PRIMARY KEY                   | 数据ID                |
+| UserName       | VARCHAR(20) | NOT NULL, REFERENCES UserInfo(UserName) | 外键，用户名          |
+| RecordTitle    | VARCHAR(48) | NOT NULL                                | 数据记录标题          |
+| RecordSort     | VARCHAR(32) | NOT NULL                                | 数据记录分类          |
+| RecordKey      | VARCHAR(48) | NOT NULL, UNIQUE                        | 加密数据的AES密钥密文 |
+| RecordFileName | VARCHAR(32) | NOT NULL, UNIQUE                        | 数据文件的文件名      |
 
 ---
 
