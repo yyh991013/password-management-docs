@@ -13,12 +13,12 @@
 
 #### 用户表UserInfo
 
-| 字段名称       | 字段类型    | 字段约束              | 注释            |
-| :------------- | ----------- | --------------------- | --------------- |
-| UserName       | VARCHAR(20) | PRIMARY KEY, NOT NULL | 用户名          |
-| UserID         | CHAR(32)    | NOT NULL, UNIQUE      | 用户ID(UID)密文 |
-| UserPublicKey  | TEXT        | NOT NULL, UNIQUE      | 用户RSA公钥     |
-| UserPrivateKey | TEXT        | NOT NULL, UNIQUE      | 用户RSA私钥密文 |
+| 字段名称       | 字段类型     | 字段约束              | 注释            |
+| :------------- | ------------ | --------------------- | --------------- |
+| UserName       | VARCHAR(20)  | PRIMARY KEY, NOT NULL | 用户名          |
+| UserID         | VARCHAR(128) | NOT NULL, UNIQUE      | 用户ID(UID)密文 |
+| UserPublicKey  | TEXT         | NOT NULL, UNIQUE      | 用户RSA公钥     |
+| UserPrivateKey | TEXT         | NOT NULL, UNIQUE      | 用户RSA私钥密文 |
 
 #### 数据记录表DataRecord
 
