@@ -36,18 +36,18 @@
 
 #### 握手
 
-1. *Client*生成一RSA密钥对以及*ClientID*
-2. *Client*将*ClientPrivate*安全地保存在本地，将*ClientPublic*与*ClientID*和本机IP地址打包并使用*Base64*编码
-3. *Client*将编码后的数据使用预置的*ServerPublic*加密并发送至*Server*
-4. *Server*使用*ServerPrivate*解密数据
+1. *Client*生成一RSA密钥对以及*ClientID*，和一个*DataKey*
+2. *Client*将*ClientPrivate*安全地保存在本地，将*ClientPublic*与*ClientID*和本机IP地址打包
+3. *Client*将编码后的数据使用*DataKey*加密并使用*Base64*编码，并将*DataKey*使用预置的*ServerPublic*加密并发送至*Server*
+4. *Server*使用*ServerPrivate*解密*DataKey*，并使用*DataKey*解密数据
 5. *Server*将*ClientID*与IP地址和*ClientPublic*临时保存对应关系
 6. 握手成功
 
 #### 传输
 
-1. *Client*随机生成一个*DataKey*，使用*DataKey*加密明文数据
+1. *Client*随机生成一个*DataKey*，使用*DataKey*加密明文数据和*ClientID*
 2. *Client*使用*ServerPublic*加密*DataKey*
-3. *Client*将加密的*DataKey*和加密的密文以及*ClientID*发送至*Server*
+3. *Client*将加密的*DataKey*和加密的密文以及加密的*ClientID*发送至*Server*
 4. *Server*验证*ClientID*，并使用*ServerPrivate*解密*DataKey*
 5. *Server*验证*DataKey*中包含的IP地址是否与缓存中*ClientID*对应的IP地址相同，若不匹配则返回错误信息
 6. 若IP地址匹配则更新*ClientID*的对应关系数据的超时时间
