@@ -35,7 +35,7 @@
 1. *Client*向*Server*发送用户名  
 2. *Server*检查是否已经存在该用户,若存在则直接返回错误信息
 3. 若不存在该用户,则生成一个*UID*并发送给*Client*
-4. *Client*接收到*UID*,使用用户的密码加密*UID*并将加密后的*UID*发送给*Server*
+4. *Client*接收到*UID*,使用用户的密码加密*UID*并将加密后的*UID*和用户名发送给*Server*
 5. *Server*为用户生成一RSA密钥对,使用明文*UID*加密*UserPrivate*
 6. 将用户名、加密的*UID*、加密后的*UserPrivate*和明文*UserPublic*保存至数据库
 7. 注册成功
@@ -49,7 +49,7 @@
 5. 若能解密成功,则用户输入的密码正确,使用解密后的*UID*解密*UserPrivate*
 6. 使用解密的*UserPrivate*解密*AccessToken*
 7. *Client*保存明文*AccessToken*与明文*UID*
-8. *Client*向*Server*发送明文*AccessToken*与用户名
+8. *Client*向*Server*发送明文*AccessToken*
 9. *Server*保存明文*AccessToken*与用户名的临时对应关系
 10. 登录成功
 
