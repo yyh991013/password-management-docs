@@ -34,11 +34,10 @@
 
 1. *Client*向*Server*发送用户名  
 2. *Server*检查是否已经存在该用户,若存在则直接返回错误信息
-3. 若不存在该用户,则生成一个*UID*并发送给*Client*
-4. *Client*接收到*UID*,使用用户的密码加密*UID*并将加密后的*UID*和用户名发送给*Server*
-5. *Server*为用户生成一RSA密钥对,使用明文*UID*加密*UserPrivate*
-6. 将用户名、加密的*UID*、加密后的*UserPrivate*和明文*UserPublic*保存至数据库
-7. 注册成功
+3. 若不存在该用户,*Client*生成一个*UID*和*RecoveryKey*,分别使用用户的密码和*RecoveryKey*加密*UID*,生成一RSA密钥对,使用明文*UID*加密*UserPrivate*
+6. 将用户名、*RecoveryKey*、加密两个的*UID*、加密后的*UserPrivate*和明文*UserPublic*发送至*Server*
+5. 发送一份包含RecverKey的邮件给用户并提醒其谨慎保管
+6. 注册成功
 
 #### 登录
 
@@ -52,6 +51,18 @@
 8. *Client*向*Server*发送明文*AccessToken*
 9. *Server*保存明文*AccessToken*与用户名的临时对应关系
 10. 登录成功
+
+#### 找回账号(忘记密码)
+
+1. *Server*向用户发送一封含有验证码的验证邮件
+2. *Client*向*Server*发送验证码
+3. *Server*检查验证码是否一致,若不一致返回错误信息
+4. 若验证码一致,则向*Client*发送使用*RecoveryKey*加密的*UID*
+5. 使用用户输入的*RecoveryKey*解密UID,若解密失败则提示错误
+6. 若解密成功,则用用户设置的新密码加密UID,并生成新的*RecoveryKey*加密*UID*
+7. 将两个*UID*和RecoveryKey发送至*Server*
+8. *Server*发送包含新的RecoveryKey的邮件到用户邮箱
+9. 找回账号
 
 #### 增加记录
 
