@@ -29,6 +29,8 @@
 - 日常的数据传输时，*DataKey*的随机生成规则为**IP+随机部分**，IP地址部分在一定程度上保证了数据不被抓取并被异地传输，随机部分保证了*DataKey*的不可预测性。
 - 在第一次握手时，*Client*应该生成一个*ClientID*便于*Server*区分，随机算法应该最大程度保证生成的*ClientID*不重复。
 - 非对称加密算法使用RSA-OAEP 2048bit，对称算法使用AES-256-CBC。
+- 导出密钥指的是使用PBKDF2对一个明文字符串采取多次加盐(salt)哈希操作产生一个AES密钥。
+- iv是AES-256-CBC中规定的用于加密数据的初始向量(Initial Vector)，解密同样需要这个数据。
 
 ---
 
@@ -37,17 +39,18 @@
 #### 握手
 
 1. *Client*生成一RSA密钥对以及*ClientID*，和一个*DataKey*
-2. *Client*将*ClientPrivate*安全地保存在本地，将*ClientPublic*与*ClientID*和本机IP地址打包
-3. *Client*将编码后的数据使用*DataKey*加密并使用*Base64*编码，并将*DataKey*使用预置的*ServerPublic*加密并发送至*Server*
-4. *Server*使用*ServerPrivate*解密*DataKey*，并使用*DataKey*解密数据
-5. *Server*将*ClientID*与IP地址和*ClientPublic*临时保存对应关系
-6. 握手成功
+2. 生成一个随机的*iv*和*salt*用于导出密钥和加密过程
+3. *Client*将*ClientPrivate*安全地保存在本地，将*ClientPublic*与*ClientID*和本机IP地址打包
+4. *Client*将编码后的数据使用*DataKey*加密并使用*Base64*编码，并将*DataKey、iv、salt*使用预置的*ServerPublic*加密并发送至*Server*
+5. *Server*使用*ServerPrivate*解密*DataKey*等数据，并使用*DataKey*解密数据
+6. *Server*将*ClientID*与IP地址和*ClientPublic*临时保存对应关系
+7. 握手成功
 
 #### 传输
 
-1. *Client*随机生成一个*DataKey*，使用*DataKey*加密明文数据和*ClientID*
+1. *Client*随机生成一个*DataKey，iv，salt*，使用*salt*来导出密钥并使用*DataKey、iv*加密明文数据和*ClientID*
 2. *Client*使用*ServerPublic*加密*DataKey*
-3. *Client*将加密的*DataKey*和加密的密文以及加密的*ClientID*发送至*Server*
+3. *Client*将加密的*DataKey，salt，iv*和加密的密文以及加密的*ClientID*发送至*Server*
 4. *Server*验证*ClientID*，并使用*ServerPrivate*解密*DataKey*
 5. *Server*验证*DataKey*中包含的IP地址是否与缓存中*ClientID*对应的IP地址相同，若不匹配则返回错误信息
 6. 若IP地址匹配则更新*ClientID*的对应关系数据的超时时间
