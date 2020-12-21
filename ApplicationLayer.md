@@ -25,6 +25,7 @@
 - “环环相扣”，所有的数据保密都靠用户的密码，只有用户妥善保管该系统的密码才能保证数据安全。密码加密*UID*，*UID*加密*UserPrivate*，*UserPrivate*加密*AccessToken*，而每个记录都被随机生成的*RecordKey*加密，而*RecordKey*又被*UID*加密。*Server*完全无法查看用户的任何数据，也不会直接保存用户密码，而通信过程又被传输层安全通道进行加密，只要用户不直接暴露自己的密码就能保证数据安全。
 - 如果用户忘记了密码，则无法恢复加密的数据。
 - 除去*AccessToken*的下发和解密过程使用RSA-OAEP 2048bit算法外，其他加密过程均使用AES-256-CBC算法。
+- 使用AES算法的部分均会使用到"盐"和初始向量，这部分数据需要与密文一起发送，如登录的时候服务端返回一些被加密的数据，也会同时返回盐和初始向量部分的数据。在客户端向服务端提交数据时亦是如此，如果涉及到AES算法在提交密文的同时均需要同时提交盐和初始向量。具体情况以接口文档为准。
 
 ---
 
@@ -75,33 +76,16 @@
 7. *Server*将加密的*RecordKey*以及加密的用户数据永久保存至数据库
 8. 增加成功
 
-#### 获取所有记录的标记信息(标题与分类)
+#### 获取所有数据
 
-1. *Client*将*AccessToken*发送至*Server*
-2. *Server*使用*AccessToken*验证身份
-3. *Server*将分类和标题信息以及对应的*RecordID*打包并使用*Base64*编码
-4. *Server*将编码后的数据使用*AccessToken*加密并发送给*Client*
-5. *Client*将加密后的数据使用*AccessToken*解密
-6. 获取成功
-
-#### 获取特定记录
-
-1. *Client*将*RecordID*使用*Base64*编码
-2. *Client*使用*AccessToken*加密编码后的数据
-3. *Client*将*AccessToken*与加密后的数据发送至*Server*
-4. *Server*验证*AccessToken*
-5. *Server*将加密后的*RecordKey*和加密的用户数据以及标题和分类使用*AccessToken*加密
-6. *Server*将加密的数据发送给*Client*
-7. *Client*使用*AccessToken*解密数据
-8. *Client*使用明文*UID*解密*RecordKey*
-9. *Client*使用解密后的*RecordKey*解密用户数据
-10. 获取成功
+1. *Client*将用户的邮箱与*AccessToken*一并发送给*Server*
+2. *Server*验证*AccessToken*与邮箱后返回所有匹配的记录数据
 
 #### 修改特定记录
 
 1. *Client*将用户数据使用*Base64*编码
 2. *Client*随机生成一个*RecordKey*
-3. *Client*使用*RecordKey*加密编码后的用户数据
+3. *Client*使用*RecordKey*加密用户数据
 4. *Client*使用明文*UID*加密*RecordKey*
 5. *Client*将加密后的*RecordKey*、*RecordID*、加密后的用户数据以及*AccessToken*发送给*Server*
 6. *Server*检验*AccessToken*并取得用户名
